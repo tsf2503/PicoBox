@@ -39,7 +39,7 @@ class Gamepad:
         # report[0] buttons 1-8 (LSB is button 1)
         # report[1] buttons 9-16
         # report[2] buttons 17-24
-        # report[3] buttons 24-27 + 5 padding
+        # report[3] buttons 24-32 padding
         self._report = bytearray(4)
 
         # Remember the last report as well, so we can avoid sending
@@ -140,8 +140,8 @@ class Gamepad:
 
     @staticmethod
     def _validate_button_number(button):
-        if not 1 <= button <= 27:
-            raise ValueError("Button number must in range 1 to 27")
+        if not 1 <= button <= 32:
+            raise ValueError("Button number must in range 1 to 32")
         return button 
 
     @staticmethod 

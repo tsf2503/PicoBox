@@ -1,4 +1,9 @@
 import usb_hid
+import supervisor
+
+
+supervisor.runtime.autoreload = False  # CirPy 8 and above
+print("supervisor.runtime.autoreload = False")
 
 # This is only one example of a gamepad descriptor, and may not suit your needs.
 GAMEPAD_REPORT_DESCRIPTOR = bytes((
@@ -22,8 +27,8 @@ gamepad = usb_hid.Device(
     report_descriptor=GAMEPAD_REPORT_DESCRIPTOR,
     usage_page=0x01,           # Generic Desktop Control
     usage=0x05,                # Gamepad
-    report_ids=(1,),           # Descriptor uses report ID 1.
-    in_report_lengths=(2,),    # This gamepad sends 2 bytes in its report.
+    report_ids=(1,),           # Descriptor uses report ID 1.P
+    in_report_lengths=(4,),    # This gamepad sends 4 bytes in its report.
     out_report_lengths=(0,),   # It does not receive any reports.
 )
 

@@ -5,11 +5,8 @@
         "reportShadowedImports": "none"
     },
     "cSpell.words": [
-        "adafruit",
-        "digitalio",
-        "Gamepad",
-        "Halbert",
-        "Hbbbb",
-        "pwmio"
+        "Adafruit",
+        "gamepad",
+        "Halbert"
     ]
 }
