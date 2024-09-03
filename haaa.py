@@ -52,7 +52,7 @@ fps_buttons = {0 : Keycode.W, 1 : Keycode.A, 2 : Keycode.S, 3 : Keycode.D,
                8 : Keycode.ENTER, 9 : Keycode.ENTER, 10 : Keycode.ENTER, 11 : Keycode.ENTER, 12 : Keycode.ENTER
                , 13 : Keycode.ENTER, 14 : Keycode.ENTER, 15 : Keycode.ENTER}
 
-#List of defind mode names
+#List of defined mode names
 mode_names = {1 : 'Gamepad', 2 : 'Keyboard', 3 : 'FPS', 4 : "Mouse", 5 : "Multimedia"}
 
 #Set Default Mode To 1
@@ -104,7 +104,7 @@ while True:
         setx = 0
         sety = 0
         #Not keyboard presses for directional
-        #So check them seperately first
+        #So check them separately first
         if not buttons[0].value:
             sety = -127
         if not buttons[2].value:
@@ -122,8 +122,8 @@ while True:
         # Go through all the button definitions, and
         # press or release as appropriate
         for i, button in enumerate(buttons):
-            if i > 3: #Skip the first 4, since they're the directionals
-                gamepad_button_num = gamepad_buttons[i - 4] # Minus 4 to ignore directionals
+            if i > 3: #Skip the first 4, since they're the directional
+                gamepad_button_num = gamepad_buttons[i - 4] # Minus 4 to ignore directional
                 if button.value:
                     gp.release_buttons(gamepad_button_num)
                 else:

@@ -39,7 +39,7 @@ class Gamepad:
         # report[0] buttons 1-8 (LSB is button 1)
         # report[1] buttons 9-16
         # report[2] buttons 17-24
-        # report[3] buttons 24-32 padding
+        # report[3] buttons 24-32 
         self._report = bytearray(4)
 
         # Remember the last report as well, so we can avoid sending
