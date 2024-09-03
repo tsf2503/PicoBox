@@ -6,7 +6,11 @@
     },
     "cSpell.words": [
         "Adafruit",
+        "analogio",
         "gamepad",
-        "Halbert"
+        "GPIO",
+        "Halbert",
+        "mediacontrol",
+        "OLED"
     ]
 }

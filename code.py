@@ -1,11 +1,17 @@
+import time
 import board
 import digitalio
 import usb_hid
+
 from hid_gamepad import Gamepad
-import time
 
+from adafruit_hid.keyboard import Keyboard
+from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 
-gp = Gamepad(usb_hid.devices)
+keyboard = Keyboard(usb_hid.devices)
+layout = KeyboardLayoutUS(keyboard)
+
+# gp = Gamepad(usb_hid.devices)
 
 push_button = digitalio.DigitalInOut(board.GP16)
 push_button.switch_to_input(pull=digitalio.Pull.UP)
@@ -26,6 +32,8 @@ while True:
     if last_press != press:
         if not(press):
             last_press = press
+            layout.write("Hello World!")
+            # gp.click_buttons(1)
         else:
             last_press = press
     print (press)

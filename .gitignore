@@ -1,0 +1,4 @@
+boot_out.txt
+$RECYCLE.BIN/
+
+import microcontroller ; microcontroller.reset()
