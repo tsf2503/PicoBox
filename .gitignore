@@ -1,4 +1,6 @@
 boot_out.txt
-$RECYCLE.BIN/
+$RECYCLE.BIN
+.vscode/
+
 
 import microcontroller ; microcontroller.reset()
