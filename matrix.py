@@ -38,15 +38,6 @@ class ButtonMatrix:
 
 
 
-    # def mode_press(self, col, row):
-    #     start = time.monotonic
-    #     col.value = 1
-    #     while row.value == 1:
-
-    #     col.value = 0
-
-
-
     def check(self):
         for col_num, col in enumerate(self.cols):
             col.value = 1
@@ -69,9 +60,10 @@ class ButtonMatrix:
                     end = time.monotonic()
                     col.value = 0
                     # Returns -1 for a short press and -2 for a long press
+                    print(end-start)
                     if end-start < 0.5: return -1
                     else: return -2
-                
+                time.sleep(0.2)
                 col.value = 0
                 self.ClickButton(button_num)
                 return button_num

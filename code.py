@@ -24,7 +24,22 @@ mediacontrol = ConsumerControl(usb_hid.devices)
 MODE = 27
 
 #Define the current mode 
-mode = 1
+mode = 0
+
+# Mode indicator leds 
+indicator_led_pins = (board.GP26, board.GP22, board.GP21)
+
+indicator_led = []
+for pin in indicator_led_pins:
+    led = digitalio.DigitalInOut(pin)
+    led.direction = digitalio.Direction.OUTPUT
+    indicator_led.append(led)
+
+# Turn on the Red light for mode 0 and off for all others
+indicator_led[0].value = 0
+indicator_led[1].value = 1
+indicator_led[2].value = 1
+
 
 # Matrix pins 
 col_pins = (board.GP0, board.GP1, board.GP2, board.GP3, board.GP4, board.GP5) 
@@ -34,28 +49,54 @@ switch_row_pins = (board.GP6,board.GP7)
 
 matrix = ButtonMatrix(col_pins, row_pins, switch_col_pins, switch_row_pins, MODE)
 
+# Switches the mode button color to input 
+def ModeColorSelect(color):
+    global indicator_led
 
-    
+    indicator_led[color - 2].value = 1
+    indicator_led[color - 1].value = 1
+    indicator_led[color].value = 0
+
+
+# Long press on mode button enters selector mode checks the button pressed to select mode
 def ModeLongPress():
     global mode
+    
     print("chose mode")
+    
+    start = time.monotonic() 
+    color = mode
     while True:
+        print(start-time.monotonic())
+        if time.monotonic() - start > 1.5:
+            color += 1
+            if color == 3: color = 0
+            ModeColorSelect(color)
+            start = time.monotonic()
+        
         button = matrix.check()
         if button is None: continue
         if button == -1:
+            ModeColorSelect(mode)
             print("return "+ str(mode))
             return
         elif 11 <= button <= 13:
-            mode = button - 10
+            mode = button - 11
+            ModeColorSelect(mode)
             print(button, button - 10, mode)
             return
 
+
+# Short press on mode button switches to next mode 
 def ModePress():
     global mode
     mode += 1 
+
+    if mode == 3:
+        mode = 0
     
-    if mode == 4:
-        mode = 1
+    ModeColorSelect(mode)
+    
     
 while True:
 
