@@ -2,8 +2,8 @@ import usb_hid
 import supervisor
 
 
-supervisor.runtime.autoreload = False  # CirPy 8 and above
-print("supervisor.runtime.autoreload = False")
+# supervisor.runtime.autoreload = False  # CirPy 8 and above
+# print("supervisor.runtime.autoreload = False")
 
 # This is only one example of a gamepad descriptor, and may not suit your needs.
 GAMEPAD_REPORT_DESCRIPTOR = bytes((
