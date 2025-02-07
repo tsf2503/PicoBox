@@ -48,7 +48,7 @@ class ButtonMatrix:
                 if row.value != 1: continue
 
                 if col_num == 5:
-                    button_num = 25 + row_num + 2
+                    button_num = 38 + row_num 
                 else:
                     button_num = (row_num + 2)* 5 + col_num + 1
      
@@ -78,7 +78,7 @@ class ButtonMatrix:
                 if row.value == self.switch_status[num]: continue
                 self.switch_status[num] = row.value
                 if col_num == 5:
-                    button_num = 25 + row_num
+                    button_num = 36 + row_num
                 else:
                     button_num = (row_num)* 5 + col_num + 1
                 if row.value == 1:
@@ -99,3 +99,44 @@ class ButtonMatrix:
     def ReleaseButton(self, button):
         print(f"Release Button; {button}")
 
+
+class Encoders:
+
+    def __init__(self, encoder_pins):
+        
+        self.a = []
+        self.b = []
+        self.last = [0] * len(encoder_pins)
+        for pin in encoder_pins:
+            encoder_a = digitalio.DigitalInOut(pin[0])
+            encoder_b = digitalio.DigitalInOut(pin[1])
+
+            encoder_a.switch_to_input(pull = digitalio.Pull.DOWN)
+            encoder_b.switch_to_input(pull = digitalio.Pull.DOWN)
+
+            self.a.append(encoder_a)
+            self.b.append(encoder_b)
+
+    def check(self):
+        for i, (enc_a, enc_b) in enumerate(zip(self.a, self.b)):
+            a_current = enc_a.value
+            b_current = enc_b.value
+            # Checks movement
+            if self.last[i] != a_current & a_current == 1:
+                # Anticlockwise 
+                if a_current != b_current:
+                    self.ClickButton(2 * i + 26)
+                # Clockwise
+                else:
+                    self.ClickButton(2 * i + 27)
+            self.last[i] = a_current
+    
+
+    def ClickButton(self, button):
+        print(f"Click Button; {button}")
+    
+    def PressButton(self, button):
+        print(f"Press Button; {button}")
+
+    def ReleaseButton(self, button):
+        print(f"Release Button; {button}")

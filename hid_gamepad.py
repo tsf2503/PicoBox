@@ -140,7 +140,7 @@ class Gamepad:
 
     @staticmethod
     def _validate_button_number(button):
-        if not 1 <= button <= 32:
+        if not 1 <= button <= 64:
             raise ValueError("Button number must in range 1 to 32")
         return button 
 

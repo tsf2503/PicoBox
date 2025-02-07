@@ -3,7 +3,7 @@ import digitalio
 import usb_hid
 import time
 
-from matrix import ButtonMatrix
+from matrix import ButtonMatrix, Encoders
 
 from hid_gamepad import Gamepad
 
@@ -21,7 +21,7 @@ mediacontrol = ConsumerControl(usb_hid.devices)
 # gp = Gamepad(usb_hid.devices)
 
 #Define the Modificador button
-MODE = 27
+MODE = 38
 
 #Define the current mode 
 mode = 0
@@ -49,6 +49,12 @@ switch_row_pins = (board.GP6,board.GP7)
 
 matrix = ButtonMatrix(col_pins, row_pins, switch_col_pins, switch_row_pins, MODE)
 
+
+# Encoder Pins
+enc = [(board.GP11, board.GP20), (board.GP12, board.GP19), (board.GP13, board.GP18), (board.GP14, board.GP17), (board.GP15, board.GP16)]
+encoders = Encoders(enc)
+
+
 # Switches the mode button color to input 
 def ModeColorSelect(color):
     global indicator_led
@@ -67,7 +73,6 @@ def ModeLongPress():
     start = time.monotonic() 
     color = mode
     while True:
-        print(start-time.monotonic())
         if time.monotonic() - start > 1.5:
             color += 1
             if color == 3: color = 0
@@ -99,7 +104,6 @@ def ModePress():
     
     
 while True:
-
     matrix.SwitchCheck()
     button = matrix.check()
 
@@ -108,3 +112,5 @@ while True:
         elif button == -2: ModeLongPress()
         
         print("mode:" + str(mode))
+
+    encoders.check()
