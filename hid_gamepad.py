@@ -14,7 +14,6 @@ import time
 
 from adafruit_hid import find_device
 
-
 class Gamepad:
     """Emulate a generic gamepad controller with 16 buttons,
     numbered 1-16, and two joysticks, one controlling
@@ -40,11 +39,11 @@ class Gamepad:
         # report[1] buttons 9-16
         # report[2] buttons 17-24
         # report[3] buttons 24-32 
-        self._report = bytearray(4)
+        self._report = bytearray(8)
 
         # Remember the last report as well, so we can avoid sending
         # duplicate reports.
-        self._last_report = bytearray(4) 
+        self._last_report = bytearray(8) 
 
         # Store settings separately before putting into report. Saves code
         # especially for buttons.
@@ -127,7 +126,7 @@ class Gamepad:
         If ``always`` is ``False`` (the default), send only if there have been changes.
         """
         struct.pack_into(
-            "<I",
+            "<Q",
             self._report,
             0,
             self._buttons_state,
@@ -140,7 +139,7 @@ class Gamepad:
 
     @staticmethod
     def _validate_button_number(button):
-        if not 1 <= button <= 32:
+        if not 1 <= button <= 64:
             raise ValueError("Button number must in range 1 to 32")
         return button 
 
