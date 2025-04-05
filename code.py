@@ -2,22 +2,26 @@ import board
 import digitalio
 import usb_hid
 import time
+import toml
 
 from matrix import ButtonMatrix, Encoders
 
 from hid_gamepad import Gamepad
 
 from adafruit_hid.keyboard import Keyboard
+from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 
 keyboard = Keyboard(usb_hid.devices)
 layout = KeyboardLayoutUS(keyboard)
 
-
 gp = Gamepad(usb_hid.devices)
 
+with open("modes.toml", "r") as f:
+    config = toml.load(f)
+
 #Define the Modificador button
-MODE = 38
+MODE = int(config["mode"])
 
 #Define the current mode
 mode = 0
@@ -98,15 +102,46 @@ def ModePress():
 
     ModeColorSelect(mode)
 
+def modeSelec(button):
+    index = str(abs(button))
+
+    if isinstance(config[str(mode)][index], list) and config[str(mode)][index][0] == "gamepad":
+        gpButton = int(config[str(mode)][index][1])
+        print("gamepad:", gpButton)
+        if config[str(mode)][index][2] == "TOGGLE":
+            gp.click_buttons(gpButton)
+
+        elif config[str(mode)][index][2] == "SWITCH":
+            if button > 0:
+                gp.press_buttons(gpButton)
+            else:
+                gp.release_buttons(gpButton)
+
+
+    elif isinstance(config[str(mode)][index], list) and config[str(mode)][index][0] == "key":
+        # Extract keycodes from the list
+        keycodes = [getattr(Keycode, code.upper()) for code in config[str(mode)][index][1:]]
+        # Send the keycodes
+        print(f"Sending: {keycodes}")  # Debugging output
+        keyboard.send(keycodes)
+
+    elif isinstance(config[str(mode)][index], list) and config[str(mode)][index][0] == "string":
+        layout.write(config[str(mode)][index][1])
+    
 
 while True:
-    matrix.SwitchCheck()
+    switch = matrix.SwitchCheck()
+    if switch is not None:
+        modeSelec(button)
+    
     button = matrix.check()
-
     if button is not None:
-        if button == -1: ModePress()
-        elif button == -2: ModeLongPress()
+        if button == -1:
+            ModePress()
+        elif button == -2: 
+            ModeLongPress()
+        else:
+            modeSelec(button)
 
-        print("mode:" + str(mode))
 
     encoders.check()

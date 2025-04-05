@@ -7,8 +7,8 @@ A Button Box inspired by
 
  ## Functionalities / TODO list
 - [x] Button matrix
-- [ ] Encoders
+- [x] Encoders
 - [x] Mode Lights
-- [ ] Gamepad support 
-  - [ ] Report Descriptor
-- [ ] Mode Template
+- [x] Gamepad support 
+  - [x] Report Descriptor
+- [x] Mode Template
