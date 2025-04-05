@@ -10,23 +10,19 @@ from hid_gamepad import Gamepad
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 
-from adafruit_hid.consumer_control_code import ConsumerControlCode
-from adafruit_hid.consumer_control import ConsumerControl
-
 keyboard = Keyboard(usb_hid.devices)
 layout = KeyboardLayoutUS(keyboard)
 
-mediacontrol = ConsumerControl(usb_hid.devices)
 
-# gp = Gamepad(usb_hid.devices)
+gp = Gamepad(usb_hid.devices)
 
 #Define the Modificador button
 MODE = 38
 
-#Define the current mode 
+#Define the current mode
 mode = 0
 
-# Mode indicator leds 
+# Mode indicator leds
 indicator_led_pins = (board.GP26, board.GP22, board.GP21)
 
 indicator_led = []
@@ -41,8 +37,8 @@ indicator_led[1].value = 1
 indicator_led[2].value = 1
 
 
-# Matrix pins 
-col_pins = (board.GP0, board.GP1, board.GP2, board.GP3, board.GP4, board.GP5) 
+# Matrix pins
+col_pins = (board.GP0, board.GP1, board.GP2, board.GP3, board.GP4, board.GP5)
 row_pins = (board.GP8, board.GP9, board.GP10)
 switch_col_pins = [0, 1, 2, 3, 4, 5]
 switch_row_pins = (board.GP6,board.GP7)
@@ -55,7 +51,7 @@ enc = [(board.GP11, board.GP20), (board.GP12, board.GP19), (board.GP13, board.GP
 encoders = Encoders(enc)
 
 
-# Switches the mode button color to input 
+# Switches the mode button color to input
 def ModeColorSelect(color):
     global indicator_led
 
@@ -67,10 +63,10 @@ def ModeColorSelect(color):
 # Long press on mode button enters selector mode checks the button pressed to select mode
 def ModeLongPress():
     global mode
-    
+
     print("chose mode")
-    
-    start = time.monotonic() 
+
+    start = time.monotonic()
     color = mode
     while True:
         if time.monotonic() - start > 1.5:
@@ -78,7 +74,7 @@ def ModeLongPress():
             if color == 3: color = 0
             ModeColorSelect(color)
             start = time.monotonic()
-        
+
         button = matrix.check()
         if button is None: continue
         if button == -1:
@@ -92,17 +88,17 @@ def ModeLongPress():
             return
 
 
-# Short press on mode button switches to next mode 
+# Short press on mode button switches to next mode
 def ModePress():
     global mode
-    mode += 1 
+    mode += 1
 
     if mode == 3:
         mode = 0
-    
+
     ModeColorSelect(mode)
-    
-    
+
+
 while True:
     matrix.SwitchCheck()
     button = matrix.check()
@@ -110,7 +106,7 @@ while True:
     if button is not None:
         if button == -1: ModePress()
         elif button == -2: ModeLongPress()
-        
+
         print("mode:" + str(mode))
 
     encoders.check()
