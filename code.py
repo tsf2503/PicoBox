@@ -24,7 +24,7 @@ with open("modes.toml", "rb") as f:
 MODE = int(config["mode"])
 
 #Define the current mode
-mode = 0
+mode = 2
 
 # Mode indicator leds
 indicator_led_pins = (board.GP26, board.GP22, board.GP21)
@@ -49,7 +49,7 @@ matrix = ButtonMatrix(col_pins, row_pins, MODE)
 
 
 # Encoder Pins
-enc = [(board.GP11, board.GP20), (board.GP12, board.GP19), (board.GP13, board.GP18), (board.GP14, board.GP17), (board.GP15, board.GP16)]
+enc = [(board.GP11, board.GP12), (board.GP13, board.GP14), (board.GP15, board.GP16), (board.GP17, board.GP18), (board.GP19, board.GP20)]
 encoders = Encoders(enc)
 
 
@@ -58,8 +58,8 @@ def ModeColorSelect(color):
     global indicator_led
 
     indicator_led[color - 2].value = 1
-    indicator_led[color - 1].value = 1
-    indicator_led[color].value = 0
+    indicator_led[color - 1].value = 0
+    indicator_led[color].value = 1
 
 
 # Long press on mode button enters selector mode checks the button pressed to select mode
@@ -101,7 +101,7 @@ def ModePress():
 
     if mode == 3:
         mode = 0
-
+    print (mode)
     ModeColorSelect(mode)
 
 def Selec(button):
@@ -172,8 +172,7 @@ while True:
             Selec(press)
 
 
-    # enc = encoders.check()
-    # while enc is not None:
-    #     print(enc)
-    #     Selec(enc)
-    #     enc = encoders.check()
+    enc = encoders.check()
+    while enc is not None:
+        Selec(enc)
+        enc = encoders.check()
