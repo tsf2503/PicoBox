@@ -2,7 +2,7 @@ import board
 import digitalio
 import usb_hid
 import time
-import toml
+from tomli._parser import load as toml_load
 
 from matrix import ButtonMatrix, Encoders
 
@@ -17,8 +17,8 @@ layout = KeyboardLayoutUS(keyboard)
 
 gp = Gamepad(usb_hid.devices)
 
-with open("modes.toml", "r") as f:
-    config = toml.load(f)
+with open("modes.toml", "rb") as f:
+    config = toml_load(f)
 
 #Define the Modificador button
 MODE = int(config["mode"])
