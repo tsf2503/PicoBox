@@ -6,7 +6,7 @@
 `Gamepad`
 ====================================================
 
-* Author(s): Dan Halbert
+* Author(s): Dan Halbert, Tiago Ferreira
 """
 
 import struct
@@ -15,14 +15,8 @@ import time
 from adafruit_hid import find_device
 
 class Gamepad:
-    """Emulate a generic gamepad controller with 16 buttons,
-    numbered 1-16, and two joysticks, one controlling
-    ``x` and ``y`` values, and the other controlling ``z`` and
-    ``r_z`` (z rotation or ``Rz``) values.
-
-    The joystick values could be interpreted
-    differently by the receiving program: those are just the names used here.
-    The joystick values are in the range -127 to 127."""
+    """Emulate 2 generic gamepad controller with 32 buttons,
+    numbered 1-32 and 33-64"""
 
     def __init__(self, devices):
         """Create a Gamepad object that will send USB gamepad HID reports.
@@ -31,27 +25,24 @@ class Gamepad:
         itself. A device is any object that implements ``send_report()``, ``usage_page`` and
         ``usage``.
         """
-        self._gamepad_device = find_device(devices, usage_page=0x1, usage=0x05)
+        self._gamepad_device = (find_device(devices, usage_page=0x1, usage=0x05), 
+                                find_device(devices, usage_page=0x1, usage=0x04))
 
-        # Reuse this bytearray to send mouse reports.
-        # Typically controllers start numbering buttons at 1 rather than 0.
-        # report[0] buttons 1-8 (LSB is button 1)
-        # report[1] buttons 9-16
-        # report[2] buttons 17-24
-        # report[3] buttons 24-32 
-        self._report = bytearray(8)
-
-        # Remember the last report as well, so we can avoid sending
-        # duplicate reports.
-        self._last_report = bytearray(8) 
+        
+        # self._gamepad_device = tuple(
+        #     dev for dev in devices
+        #     if (dev.usage_page == 0x1 and dev.usage == 0x05 and hasattr(dev, "send_report"))
+        # )
+        
+        if len(self._gamepad_device) != 2:
+            raise RuntimeError("No gamepad devices found!")
 
         # Store settings separately before putting into report. Saves code
         # especially for buttons.
         self._buttons_state = 0
-        # self._joy_x = 0
-        # self._joy_y = 0
-        # self._joy_z = 0
-        # self._joy_r_z = 0
+        # Remember the last buttons state as well, so we can avoid sending
+        # duplicate reports.
+        self._last_state = (bytearray(4), bytearray(4)) 
 
         # Send an initial report to test if HID device is ready.
         # If not, wait a bit and try once more.
@@ -125,22 +116,25 @@ class Gamepad:
         """Send a report with all the existing settings.
         If ``always`` is ``False`` (the default), send only if there have been changes.
         """
-        struct.pack_into(
-            "<Q",
-            self._report,
-            0,
-            self._buttons_state,
-        )
+        button_states = (self._buttons_state & 0xFFFFFFFF, (self._buttons_state >> 32) & 0xFFFFFFFF)
+        for i in range(len(self._gamepad_device)):
+            if always or button_states[i] != int.from_bytes(self._last_state[i], "little"):
+                # Store current state
+                self._last_state[i][:] = button_states[i].to_bytes(4, 'little')
+                # Prepare report - uses memoryviews to avoid copies
+                report = bytearray(4)  # Buttons 1-32 (REPORT_ID=2)
+                memoryview(report)
 
-        if always or self._last_report != self._report:
-            self._gamepad_device.send_report(self._report)
-            # Remember what we sent, without allocating new storage.
-            self._last_report[:] = self._report
+                struct.pack_into("<I", report, 0, button_states[i])
+                print(' '.join(f'{b:02X}' for b in report))
 
+                self._gamepad_device[i].send_report(report)
+
+        
     @staticmethod
     def _validate_button_number(button):
         if not 1 <= button <= 64:
-            raise ValueError("Button number must in range 1 to 32")
+            raise ValueError("Button number must in range 1 to 64")
         return button 
 
     @staticmethod 
