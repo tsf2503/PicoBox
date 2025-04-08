@@ -2,7 +2,9 @@ import board
 import digitalio
 import usb_hid
 import time
-from tomli._parser import load as toml_load
+import microcontroller
+
+from tomli._parser import load as toml_load # type: ignore
 
 from matrix import ButtonMatrix, Encoders
 
@@ -24,7 +26,7 @@ with open("modes.toml", "rb") as f:
 MODE = int(config["mode"])
 
 #Define the current mode
-mode = 2
+mode = 0
 
 # Mode indicator leds
 indicator_led_pins = (board.GP26, board.GP22, board.GP21)
@@ -92,6 +94,9 @@ def ModeLongPress():
             kb.release_all()
             gp.release_all_buttons()
             print("release all")
+        elif button == 36:
+            microcontroller.reset()
+
 
 
 # Short press on mode button switches to next mode
@@ -132,9 +137,8 @@ def Selec(button):
         # Send the keycodes
         if config[str(mode)][index][0] == "TOGGLE":
             # Only sends on press
-            if button > 0:
-                print(f"Sending: {keycodes}")
-                kb.send(*keycodes)
+            print(f"Sending: {keycodes}")
+            kb.send(*keycodes)
     
         elif config[str(mode)][index][0] == "PUSH":
             if button > 0:
@@ -176,3 +180,4 @@ while True:
     while enc is not None:
         Selec(enc)
         enc = encoders.check()
+ # type: ignore
