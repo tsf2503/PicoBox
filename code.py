@@ -97,6 +97,25 @@ def ModeLongPress():
         elif button == 36:
             microcontroller.reset()
 
+        #change switches behavior
+        elif 1 <= button <= 5:
+            index = str(abs(button))
+            offset = str(abs(button) + 5)
+            if isinstance(config[str(mode)][index], list) and config[str(mode)][index][1] == "GAMEPAD":
+                print(config[str(mode)][index])
+                config[str(mode)][index][0] = "PUSH"
+                config[str(mode)][offset][0] = "PUSH"
+                print(config[str(mode)][index])
+
+        elif 6 <= button <= 10:
+            index = str(abs(button))
+            offset = str(abs(button) - 5)
+            if isinstance(config[str(mode)][index], list) and config[str(mode)][index][1] == "GAMEPAD":
+                print(config[str(mode)][index])
+                config[str(mode)][index][0] = "TOGGLE"
+                config[str(mode)][offset][0] = "TOGGLE"
+                print(config[str(mode)][index])
+
 
 
 # Short press on mode button switches to next mode
@@ -180,4 +199,3 @@ while True:
     while enc is not None:
         Selec(enc)
         enc = encoders.check()
- # type: ignore

@@ -6,3 +6,4 @@ System Volume Information/
 *.code-workspace
 
 import microcontroller ; microcontroller.reset()
+robocopy "D:\Tech\Pico\CircuitPython\Button Box" "E:\" *.py *.toml /S /R:1 /W:1

@@ -18,7 +18,7 @@ switch.pull = digitalio.Pull.DOWN
 if (switch.value == 0):
     storage.disable_usb_drive()
 
-col.value = 0
+col.value = 0 
 col.deinit()
 switch.deinit()
 
